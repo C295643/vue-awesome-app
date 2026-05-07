@@ -14,7 +14,7 @@ function addTask() {
 
 function completeTask(index: number) {
   const [task] = tasks.value.splice(index, 1)
-  done.value.push(task)
+  if (task !== undefined) done.value.push(task)
 }
 </script>
 
