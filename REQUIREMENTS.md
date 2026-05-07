@@ -67,7 +67,7 @@ A single-list, plain-text-based to-do application built with Vue.js. Designed fo
 | # | Chunk | Status |
 |---|-------|--------|
 | 1 | Add task input + display list (in-memory) | ✅ Done |
-| 2 | Complete a task (removes from active list) | ⬜ Pending |
+| 2 | Complete a task (removes from active list) | ✅ Done |
 | 3 | Up/down reordering | ⬜ Pending |
 | 4 | Archive / done list view | ⬜ Pending |
 | 5 | Persist to `localStorage` (survives page reload) | ⬜ Pending |
