@@ -3,12 +3,18 @@ import { ref } from 'vue'
 
 const newTask = ref('')
 const tasks = ref<string[]>([])
+const done = ref<string[]>([])
 
 function addTask() {
   const text = newTask.value.trim()
   if (!text) return
   tasks.value.push(text)
   newTask.value = ''
+}
+
+function completeTask(index: number) {
+  const [task] = tasks.value.splice(index, 1)
+  done.value.push(task)
 }
 </script>
 
@@ -28,7 +34,8 @@ function addTask() {
 
     <ol v-if="tasks.length">
       <li v-for="(task, index) in tasks" :key="index">
-        {{ task }}
+        <span>{{ task }}</span>
+        <button class="complete-btn" @click="completeTask(index)">✓ Done</button>
       </li>
     </ol>
 
@@ -69,7 +76,20 @@ ol {
 }
 
 li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.4rem 0;
   font-size: 1rem;
+}
+
+.complete-btn {
+  font-size: 0.85rem;
+  color: green;
+  background: none;
+  border: 1px solid green;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
 }
 </style>
