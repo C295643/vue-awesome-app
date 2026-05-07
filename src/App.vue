@@ -16,6 +16,16 @@ function completeTask(index: number) {
   const [task] = tasks.value.splice(index, 1)
   if (task !== undefined) done.value.push(task)
 }
+
+function moveUp(index: number) {
+  if (index === 0) return
+  tasks.value.splice(index - 1, 0, ...tasks.value.splice(index, 1))
+}
+
+function moveDown(index: number) {
+  if (index === tasks.value.length - 1) return
+  tasks.value.splice(index + 1, 0, ...tasks.value.splice(index, 1))
+}
 </script>
 
 <template>
@@ -35,7 +45,11 @@ function completeTask(index: number) {
     <ol v-if="tasks.length">
       <li v-for="(task, index) in tasks" :key="index">
         <span>{{ task }}</span>
-        <button class="complete-btn" @click="completeTask(index)">✓ Done</button>
+        <div class="actions">
+          <button class="move-btn" :disabled="index === 0" @click="moveUp(index)">▲</button>
+          <button class="move-btn" :disabled="index === tasks.length - 1" @click="moveDown(index)">▼</button>
+          <button class="complete-btn" @click="completeTask(index)">✓ Done</button>
+        </div>
       </li>
     </ol>
 
@@ -81,6 +95,25 @@ li {
   align-items: center;
   padding: 0.4rem 0;
   font-size: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.move-btn {
+  font-size: 0.8rem;
+  background: none;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 .complete-btn {
