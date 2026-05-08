@@ -26,6 +26,8 @@ function moveDown(index: number) {
   if (index === tasks.value.length - 1) return
   tasks.value.splice(index + 1, 0, ...tasks.value.splice(index, 1))
 }
+
+const showDone = ref(false)
 </script>
 
 <template>
@@ -54,6 +56,18 @@ function moveDown(index: number) {
     </ol>
 
     <p v-else>No tasks yet. Add one above.</p>
+
+    <section class="archive">
+      <button class="toggle-btn" @click="showDone = !showDone">
+        {{ showDone ? 'Hide' : 'Show' }} completed ({{ done.length }})
+      </button>
+      <ol v-if="showDone && done.length">
+        <li v-for="(task, index) in done" :key="index" class="done-item">
+          {{ task }}
+        </li>
+      </ol>
+      <p v-else-if="showDone">No completed tasks yet.</p>
+    </section>
   </main>
 </template>
 
@@ -124,5 +138,26 @@ li {
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
   cursor: pointer;
+}
+
+.archive {
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.toggle-btn {
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.done-item {
+  color: #999;
+  text-decoration: line-through;
 }
 </style>
