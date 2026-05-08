@@ -40,7 +40,32 @@ function moveDown(index: number) {
 }
 
 const showDone = ref(false)
-</script>
+
+function exportFile(lines: string[], filename: string) {
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function importFile(target: typeof tasks, event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const text = e.target?.result as string
+    target.value = text.split('\n').map(l => l.trim()).filter(Boolean)
+  }
+  reader.readAsText(file)
+  ;(event.target as HTMLInputElement).value = ''
+}
+
+
+function importTasks(e: Event) { importFile(tasks, e) }
+function importDone(e: Event) { importFile(done, e) }</script>
 
 <template>
   <main>
@@ -79,6 +104,20 @@ const showDone = ref(false)
         </li>
       </ol>
       <p v-else-if="showDone">No completed tasks yet.</p>
+    </section>
+
+    <section class="io">
+      <h2>Export / Import</h2>
+      <div class="io-row">
+        <span>Active tasks (todo.txt)</span>
+        <button @click="exportFile(tasks, 'todo.txt')">Export</button>
+        <label class="import-label">Import<input type="file" accept=".txt" @change="importTasks($event)" /></label>
+      </div>
+      <div class="io-row">
+        <span>Completed tasks (done.txt)</span>
+        <button @click="exportFile(done, 'done.txt')">Export</button>
+        <label class="import-label">Import<input type="file" accept=".txt" @change="importDone($event)" /></label>
+      </div>
     </section>
   </main>
 </template>
@@ -171,5 +210,40 @@ li {
 .done-item {
   color: #999;
   text-decoration: line-through;
+}
+
+.io {
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.io h2 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.io-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.io-row span {
+  flex: 1;
+}
+
+.import-label {
+  font-size: 0.85rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.import-label input {
+  display: none;
 }
 </style>

@@ -71,4 +71,4 @@ A single-list, plain-text-based to-do application built with Vue.js. Designed fo
 | 3 | Up/down reordering | ✅ Done |
 | 4 | Archive / done list view | ✅ Done |
 | 5 | Persist to `localStorage` (survives page reload) | ✅ Done |
-| 6 | Plain text file export / import | ⬜ Pending |
+| 6 | Plain text file export / import | ✅ Done |
