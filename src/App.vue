@@ -1,9 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
+
+function load<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? (JSON.parse(raw) as T) : fallback
+  } catch {
+    return fallback
+  }
+}
 
 const newTask = ref('')
-const tasks = ref<string[]>([])
-const done = ref<string[]>([])
+const tasks = ref<string[]>(load('tasks', []))
+const done = ref<string[]>(load('done', []))
+
+watchEffect(() => localStorage.setItem('tasks', JSON.stringify(tasks.value)))
+watchEffect(() => localStorage.setItem('done', JSON.stringify(done.value)))
 
 function addTask() {
   const text = newTask.value.trim()
