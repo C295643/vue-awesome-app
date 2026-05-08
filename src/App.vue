@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, useTemplateRef } from 'vue'
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -41,6 +41,9 @@ function moveDown(index: number) {
 
 const showDone = ref(false)
 
+const tasksFileInput = useTemplateRef<HTMLInputElement>('tasksFileInput')
+const doneFileInput = useTemplateRef<HTMLInputElement>('doneFileInput')
+
 function exportFile(lines: string[], filename: string) {
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' })
   const url = URL.createObjectURL(blob)
@@ -52,15 +55,16 @@ function exportFile(lines: string[], filename: string) {
 }
 
 function importFile(target: typeof tasks, event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0]
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
   if (!file) return
   const reader = new FileReader()
   reader.onload = (e) => {
     const text = e.target?.result as string
     target.value = text.split('\n').map(l => l.trim()).filter(Boolean)
+    input.value = ''
   }
   reader.readAsText(file)
-  ;(event.target as HTMLInputElement).value = ''
 }
 
 
@@ -72,12 +76,7 @@ function importDone(e: Event) { importFile(done, e) }</script>
     <h1>To-Do</h1>
 
     <form @submit.prevent="addTask">
-      <input
-        v-model="newTask"
-        type="text"
-        placeholder="Add a task…"
-        autofocus
-      />
+      <input v-model="newTask" type="text" placeholder="Add a task…" autofocus />
       <button type="submit">Add</button>
     </form>
 
@@ -111,12 +110,14 @@ function importDone(e: Event) { importFile(done, e) }</script>
       <div class="io-row">
         <span>Active tasks (todo.txt)</span>
         <button @click="exportFile(tasks, 'todo.txt')">Export</button>
-        <label class="import-label">Import<input type="file" accept=".txt" @change="importTasks($event)" /></label>
+        <button @click="tasksFileInput?.click()">Import</button>
+        <input ref="tasksFileInput" type="file" accept=".txt" class="hidden-input" @change="importTasks($event)" />
       </div>
       <div class="io-row">
         <span>Completed tasks (done.txt)</span>
         <button @click="exportFile(done, 'done.txt')">Export</button>
-        <label class="import-label">Import<input type="file" accept=".txt" @change="importDone($event)" /></label>
+        <button @click="doneFileInput?.click()">Import</button>
+        <input ref="doneFileInput" type="file" accept=".txt" class="hidden-input" @change="importDone($event)" />
       </div>
     </section>
   </main>
@@ -235,15 +236,7 @@ li {
   flex: 1;
 }
 
-.import-label {
-  font-size: 0.85rem;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  padding: 0.2rem 0.5rem;
-  cursor: pointer;
-}
-
-.import-label input {
+.hidden-input {
   display: none;
 }
 </style>
