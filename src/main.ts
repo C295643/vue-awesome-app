@@ -1,4 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { initializeMsal } from './auth/msal'
 
-createApp(App).mount('#app')
+initializeMsal().then(() => {
+  createApp(App).mount('#app')
+})
